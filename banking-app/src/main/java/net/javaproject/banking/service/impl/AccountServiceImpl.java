@@ -1,11 +1,15 @@
 package net.javaproject.banking.service.impl;
 
+import lombok.AllArgsConstructor;
 import net.javaproject.banking.dto.AccountDto;
 import net.javaproject.banking.entity.Account;
 import net.javaproject.banking.mapper.AccountMapper;
 import net.javaproject.banking.repository.AccountRepository;
 import net.javaproject.banking.service.AccountService;
+import org.springframework.stereotype.Service;
 
+@Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
 
