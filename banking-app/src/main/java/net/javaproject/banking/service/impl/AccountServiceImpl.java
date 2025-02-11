@@ -3,6 +3,7 @@ package net.javaproject.banking.service.impl;
 import lombok.AllArgsConstructor;
 import net.javaproject.banking.dto.AccountDto;
 import net.javaproject.banking.entity.Account;
+import net.javaproject.banking.exception.AccountException;
 import net.javaproject.banking.mapper.AccountMapper;
 import net.javaproject.banking.repository.AccountRepository;
 import net.javaproject.banking.service.AccountService;
@@ -27,14 +28,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDto getAccountById(Long accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account does not exist with id: " + accountId));
+                .orElseThrow(() -> new AccountException("Account does not exist with id: " + accountId));
         return AccountMapper.mapToAccountDto(account);
     }
 
     @Override
     public AccountDto deposit(Long id, double amount) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not exists with id: " + id));
+                .orElseThrow(() -> new AccountException("Account not exists with id: " + id));
 
         double updatedBalance = account.getBalance() + amount;
         account.setBalance(updatedBalance);
@@ -46,10 +47,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDto withdraw(Long id, double amount) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account does not exist with id: " + id));
+                .orElseThrow(() -> new AccountException("Account does not exist with id: " + id));
 
         if (amount > account.getBalance()) {
-            throw new RuntimeException("Withdrawn amount " + String.format("%.2f", amount) + " is greater than the Account Balance: " + account.getBalance());
+            throw new AccountException("Withdrawn amount " + String.format("%.2f", amount) + " is greater than the Account Balance: " + account.getBalance());
         }
 
         double updatedBalance = account.getBalance() - amount;
@@ -70,6 +71,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(Long id) {
+        accountRepository.findById(id)
+                .orElseThrow(() -> new AccountException("Account with id: " + id + " not exists; So cannot be deleted."));
         accountRepository.deleteById(id);
     }
 }
