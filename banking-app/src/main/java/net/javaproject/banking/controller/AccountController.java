@@ -6,7 +6,7 @@ import net.javaproject.banking.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,5 +37,10 @@ public class AccountController {
         double amountToWithdraw = request.get("amount");
         AccountDto accountDto = accountService.withdraw(accountId, amountToWithdraw);
         return ResponseEntity.ok(accountDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AccountDto>> getAllAccounts() {
+        return ResponseEntity.ok(accountService.getAllAccounts());
     }
 }
