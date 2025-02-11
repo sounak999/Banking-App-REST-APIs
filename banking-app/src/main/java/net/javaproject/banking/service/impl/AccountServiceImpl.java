@@ -36,9 +36,9 @@ public class AccountServiceImpl implements AccountService {
 
         double updatedBalance = account.getBalance() + amount;
         account.setBalance(updatedBalance);
-        accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
 
-        return AccountMapper.mapToAccountDto(account);
+        return AccountMapper.mapToAccountDto(savedAccount);
     }
 
     @Override
@@ -47,14 +47,14 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new RuntimeException("Account does not exist with id: " + id));
 
         if (amount > account.getBalance()) {
-            throw new RuntimeException("Withdrawn amount " + amount + " is greater than the Account Balance: " + account.getBalance());
+            throw new RuntimeException("Withdrawn amount " + String.format("%.2f", amount) + " is greater than the Account Balance: " + account.getBalance());
         }
 
         double updatedBalance = account.getBalance() - amount;
         account.setBalance(updatedBalance);
-        accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
 
-        return AccountMapper.mapToAccountDto(account);
+        return AccountMapper.mapToAccountDto(savedAccount);
     }
 
 }
