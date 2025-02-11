@@ -8,6 +8,8 @@ import net.javaproject.banking.repository.AccountRepository;
 import net.javaproject.banking.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessMode;
+
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -27,5 +29,32 @@ public class AccountServiceImpl implements AccountService {
         return AccountMapper.mapToAccountDto(account);
     }
 
+    @Override
+    public AccountDto deposit(Long id, double amount) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account not exists with id: " + id));
+
+        double updatedBalance = account.getBalance() + amount;
+        account.setBalance(updatedBalance);
+        accountRepository.save(account);
+
+        return AccountMapper.mapToAccountDto(account);
+    }
+
+    @Override
+    public AccountDto withdraw(Long id, double amount) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account does not exist with id: " + id));
+
+        if (amount > account.getBalance()) {
+            throw new RuntimeException("Withdrawn amount " + amount + " is greater than the Account Balance: " + account.getBalance());
+        }
+
+        double updatedBalance = account.getBalance() - amount;
+        account.setBalance(updatedBalance);
+        accountRepository.save(account);
+
+        return AccountMapper.mapToAccountDto(account);
+    }
 
 }
